@@ -3,7 +3,7 @@ import json
 import time
 import re
 from playwright.sync_api import sync_playwright
-from playwright_stealth import stealth_sync
+from playwright_stealth import stealth
 import database
 
 class BrowserEngine:
@@ -119,7 +119,7 @@ class BrowserEngine:
         context = browser.new_context(**context_args)
             
         page = context.new_page()
-        stealth_sync(page) # Apply stealth to avoid detection
+        stealth(page) # Apply stealth to avoid detection
         return browser, context, page
 
     def perform_post(self, platform, post_url, post_logic_fn):
