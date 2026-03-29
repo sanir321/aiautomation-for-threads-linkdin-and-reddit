@@ -2,7 +2,7 @@ Flask==3.0.3
 playwright==1.48.0
 playwright-stealth
 gunicorn
-flask-sqlalchemy==1.0.6
+flask-sqlalchemy==3.0.0
 praw==7.7.1
 APScheduler==3.10.4
 requests==2.32.3
