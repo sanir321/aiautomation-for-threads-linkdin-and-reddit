@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <header class="mb-10">
+        <h2 class="text-3xl font-bold tracking-tight text-slate-900">Settings & Persona</h2>
+        <p class="text-slate-500 mt-1">Configure your AI identity and API credentials.</p>
+    </header>
+
+    <form method="POST" action="/settings" class="bg-white p-10 rounded-2xl shadow-sm border border-slate-100">
+        <!-- Kilo API Key -->
+        <div class="mb-8">
+            <label for="kilo_api_key" class="block text-sm font-bold text-slate-900 mb-2">Kilo Gateway API Key</label>
+            <p id="kilo_key_desc" class="text-xs text-slate-400 mb-3 font-medium italic">Key is stored using AES encryption. Leave blank to hidden existing key.</p>
+            <input type="password" name="kilo_api_key" id="kilo_api_key" 
+                   aria-describedby="kilo_key_desc"
+                   placeholder="{% if config.kilo_api_key %}••••••••••••••••••••••••{% else %}Enter your API key...{% endif %}"
+                   class="w-full border-slate-200 rounded-xl shadow-sm p-4 text-sm focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-all outline-none">
+        </div>
+
+        <!-- AI Model Selection -->
+        <div class="mb-8">
+            <label for="model_name" class="block text-sm font-bold text-slate-900 mb-2">AI Model Model</label>
+            <p id="model_desc" class="text-xs text-slate-400 mb-3 font-medium">Select the engine that powers your social presence.</p>
+            <select name="model_name" id="model_name" aria-describedby="model_desc"
+                    class="w-full border-slate-200 rounded-xl shadow-sm p-4 text-sm focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-all outline-none appearance-none bg-no-repeat bg-[right_1rem_center] bg-[length:1em_1em] bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364748b%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')]">
+                <optgroup label="Free Models" class="font-bold text-slate-400 py-2">
+                    <option value="xiaomi/mimo-v2-pro:free" {% if config.model_name == 'xiaomi/mimo-v2-pro:free' %}selected{% endif %}>Xiaomi MiMo-V2-Pro (Free)</option>
+                    <option value="xiaomi/mimo-v2-omni:free" {% if config.model_name == 'xiaomi/mimo-v2-omni:free' %}selected{% endif %}>Xiaomi MiMo-V2-Omni (Free)</option>
+                    <option value="minimax/minimax-m2.5:free" {% if config.model_name == 'minimax/minimax-m2.5:free' %}selected{% endif %}>MiniMax M2.5 (Free)</option>
+                    <option value="nvidia/nemotron-3-super-120b-a12b:free" {% if config.model_name == 'nvidia/nemotron-3-super-120b-a12b:free' %}selected{% endif %}>NVIDIA Nemotron 3 (Free)</option>
+                    <option value="stepfun/step-3.5-flash:free" {% if config.model_name == 'stepfun/step-3.5-flash:free' %}selected{% endif %}>StepFun 3.5 Flash (Free)</option>
+                    <option value="kilo-auto/free" {% if config.model_name == 'kilo-auto/free' %}selected{% endif %}>Kilo Auto (Free)</option>
+                </optgroup>
+                <optgroup label="Premium Models" class="font-bold text-slate-400 py-2">
+                    <option value="openai/gpt-4o" {% if config.model_name == 'openai/gpt-4o' %}selected{% endif %}>GPT-4o (Standard)</option>
+                    <option value="anthropic/claude-3-5-sonnet" {% if config.model_name == 'anthropic/claude-3-5-sonnet' %}selected{% endif %}>Claude 3.5 Sonnet</option>
+                    <option value="google/gemini-pro-1.5" {% if config.model_name == 'google/gemini-pro-1.5' %}selected{% endif %}>Gemini 1.5 Pro</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <!-- Posting Time -->
+        <div class="mb-8">
+            <label for="posting_time" class="block text-sm font-bold text-slate-900 mb-2">Daily Posting Schedule</label>
+            <p class="text-xs text-slate-400 mb-3 font-medium italic">Agent will trigger once per day at this time.</p>
+            <input type="time" name="posting_time" id="posting_time" value="{{ config.posting_time }}" required
+                   class="w-full border-slate-200 rounded-xl shadow-sm p-4 text-sm focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-all outline-none">
+        </div>
+
+        <!-- Jitter Minutes -->
+        <div class="mb-8">
+            <label for="jitter_minutes" class="block text-sm font-bold text-slate-900 mb-2">Jitter Window (Minutes)</label>
+            <p class="text-xs text-slate-400 mb-3 font-medium italic">Random delay (0 to X minutes) added to posting time to look more human.</p>
+            <input type="number" name="jitter_minutes" id="jitter_minutes" value="{{ config.jitter_minutes }}" min="0" max="1440" required
+                   class="w-full border-slate-200 rounded-xl shadow-sm p-4 text-sm focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-all outline-none">
+        </div>
+
+        <!-- System Prompt / Persona -->
+        <div class="mb-10">
+            <label for="system_prompt" class="block text-sm font-bold text-slate-900 mb-2">Agent Identity (System Prompt)</label>
+            <p id="persona_desc" class="text-xs text-slate-400 mb-3 font-medium">Define your agent's core expertise and tone across all platforms.</p>
+            <textarea name="system_prompt" id="system_prompt" rows="6" aria-describedby="persona_desc"
+                      class="w-full border-slate-200 rounded-xl shadow-sm p-4 text-sm focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-all outline-none resize-none"
+                      placeholder="e.g. You are a tech lead sharing daily insights about distributed systems...">{{ config.system_prompt }}</textarea>
+        </div>
+
+        <div class="bg-slate-50 -mx-10 px-10 py-8 mb-8">
+            <h3 class="text-slate-900 font-bold text-lg mb-6">Platform-Specific Rules</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- LinkedIn Rules -->
+                <div>
+                    <label for="linkedin_rule" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">LinkedIn Style</label>
+                    <textarea name="linkedin_rule" id="linkedin_rule" rows="4"
+                              class="w-full border-slate-200 rounded-xl shadow-sm p-4 text-sm focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-all outline-none resize-none"
+                              placeholder="e.g. Professional story-telling, use paragraph breaks...">{{ config.linkedin_rule }}</textarea>
+                </div>
+                <!-- Reddit Rules -->
+                <div>
+                    <label for="reddit_rule" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Reddit Style</label>
+                    <textarea name="reddit_rule" id="reddit_rule" rows="4"
+                              class="w-full border-slate-200 rounded-xl shadow-sm p-4 text-sm focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-all outline-none resize-none"
+                              placeholder="e.g. No hashtags, use markdown, focus on discussion...">{{ config.reddit_rule }}</textarea>
+                </div>
+                <!-- Threads Rules -->
+                <div class="md:col-span-2">
+                    <label for="threads_rule" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Threads Style</label>
+                    <textarea name="threads_rule" id="threads_rule" rows="3"
+                              class="w-full border-slate-200 rounded-xl shadow-sm p-4 text-sm focus:ring-1 focus:ring-slate-900 focus:border-slate-900 transition-all outline-none resize-none"
+                              placeholder="e.g. Short punchy hooks, max 500 characters...">{{ config.threads_rule }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-end pt-6 border-t border-slate-50">
+            <button type="submit" class="bg-slate-900 text-white px-8 py-4 rounded-xl hover:bg-slate-800 font-bold text-sm transition-all shadow-lg shadow-slate-200 active:scale-95">
+                Apply System Changes
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

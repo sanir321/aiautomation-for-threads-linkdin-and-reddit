@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <header class="mb-10">
+        <h2 class="text-3xl font-bold tracking-tight text-slate-900">Dashboard</h2>
+        <p class="text-slate-500 mt-1">Overview of your autonomous social presence.</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+        <!-- Total Posts Card -->
+        <section class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+            <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Total Posts</h3>
+            <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-slate-900 leading-none">{{ analytics.total_posts }}</span>
+            </div>
+            <p class="text-sm text-slate-500 mt-4 font-medium">Lifetime social impact</p>
+        </section>
+
+        <!-- Success Rate Card -->
+        <section class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+            <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Success Rate</h3>
+            <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-slate-900 leading-none">{{ analytics.success_rate }}%</span>
+            </div>
+            <p class="text-sm text-slate-500 mt-4 font-medium">Dispatch reliability</p>
+        </section>
+        
+        <!-- Next Post Card -->
+        <section class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+            <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Next Window</h3>
+            <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-slate-900 leading-none">{{ config.posting_time }}</span>
+            </div>
+            <p class="text-sm text-slate-500 mt-4 font-medium">Daily automation cycle</p>
+        </section>
+
+        <!-- Platform Breakdown Card -->
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+            <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Distribution</h3>
+            <div class="flex justify-between items-center mt-2">
+                {% for platform, count in analytics.platforms.items() %}
+                <div class="text-center">
+                    <div class="text-lg font-bold text-slate-900">{{ count }}</div>
+                    <div class="text-[10px] uppercase text-slate-400 font-bold">{{ platform[:2] }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Trend Graph Section -->
+    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 mb-10">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h3 class="text-lg font-bold text-slate-900">Growth & Reliability Trends</h3>
+                <p class="text-sm text-slate-500 mt-1">Daily posting success and failure rates over the last 7 days.</p>
+            </div>
+            <div class="flex gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Success</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Failure</span>
+                </div>
+            </div>
+        </div>
+        <div class="h-64">
+            <canvas id="trendsChart" data-trends="{{ trends_json | tojson | safe }}"></canvas>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="p-8 border-b border-slate-50 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-slate-900">Recent Posting History</h3>
+            <span class="text-xs font-medium text-slate-400 italic">Showing last 10 attempts</span>
+        </div>
+        <div class="divide-y divide-slate-50">
+            {% for post in recent_posts %}
+            <div class="px-8 py-5 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-[10px] font-bold uppercase text-slate-400 border border-slate-100">
+                        {{ post.platform[:2] }}
+                    </div>
+                    <div>
+                        <div class="text-sm font-bold text-slate-900">{{ post.platform|capitalize }}</div>
+                        <div class="text-xs text-slate-500 mt-0.5 truncate max-w-xs md:max-w-md">{{ post.content }}</div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    {% if post.status == 'success' %}
+                    <span class="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">SUCCESS</span>
+                    {% else %}
+                    <span class="text-[10px] font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">FAILED</span>
+                    {% endif %}
+                    <div class="text-[10px] text-slate-400 mt-1 font-mono italic">{{ post.timestamp }}</div>
+                </div>
+            </div>
+            {% else %}
+            <div class="px-8 py-12 text-center">
+                <div class="text-slate-300 mb-2">
+                    <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <p class="text-sm text-slate-400">No posting history yet. The agent is standing by.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chartEl = document.getElementById('trendsChart');
+    const ctx = chartEl.getContext('2d');
+    const trends = JSON.parse(chartEl.getAttribute('data-trends'));
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: trends.labels,
+            datasets: [
+                {
+                    label: 'Success',
+                    data: trends.success,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#fff',
+                    pointBorderWidth: 2
+                },
+                {
+                    label: 'Failure',
+                    data: trends.failure,
+                    borderColor: '#fb7185',
+                    backgroundColor: 'rgba(251, 113, 133, 0.05)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: '#1e293b',
+                    padding: 12,
+                    titleFont: { size: 12, weight: 'bold' },
+                    bodyFont: { size: 12 },
+                    cornerSize: 8
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#f1f5f9',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        stepSize: 1,
+                        color: '#94a3b8',
+                        font: { size: 10 }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#94a3b8',
+                        font: { size: 10 }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

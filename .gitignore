@@ -115,6 +115,7 @@ venv.bak/
 # Debugging outputs
 *.png
 *.html
+!templates/*.html
 tmp/
 uploads/
 results/

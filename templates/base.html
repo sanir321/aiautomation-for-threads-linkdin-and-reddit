@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereign AI Social Agent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+<!-- Skip to Main Content Link -->
+<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-indigo-600 focus:text-white">
+    Skip to Main Content
+</a>
+
+<div class="flex h-screen overflow-hidden">
+    <!-- Sidebar Navigation -->
+    <aside class="w-72 bg-white border-r border-slate-200 flex-shrink-0" role="complementary">
+        <div class="px-8 py-10">
+            <h1 class="text-2xl font-black tracking-tight text-slate-900">SOVEREIGN</h1>
+            <p class="text-[10px] uppercase tracking-widest text-slate-500 mt-1.5 font-bold">Social Intelligence Agent</p>
+        </div>
+        <nav class="mt-2" aria-label="Main Navigation">
+            <ul class="space-y-1 px-4">
+                <li>
+                    <a href="/" 
+                       class="flex items-center py-3 px-4 text-sm font-medium rounded-lg transition-all duration-200 border border-transparent {% if request.path == '/' %}bg-slate-900 text-white shadow-sm shadow-slate-200 hover:bg-slate-800{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-100{% endif %}"
+                       {% if request.path == '/' %}aria-current="page"{% endif %}>
+                       Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="/settings" 
+                       class="flex items-center py-3 px-4 text-sm font-medium rounded-lg transition-all duration-200 border border-transparent {% if request.path == '/settings' %}bg-slate-900 text-white shadow-sm shadow-slate-200 hover:bg-slate-800{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-100{% endif %}"
+                       {% if request.path == '/settings' %}aria-current="page"{% endif %}>
+                       Settings & Persona
+                    </a>
+                </li>
+                <li>
+                    <a href="/accounts" 
+                       class="flex items-center py-3 px-4 text-sm font-medium rounded-lg transition-all duration-200 border border-transparent {% if request.path == '/accounts' %}bg-slate-900 text-white shadow-sm shadow-slate-200 hover:bg-slate-800{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-100{% endif %}"
+                       {% if request.path == '/accounts' %}aria-current="page"{% endif %}>
+                       Social Accounts
+                    </a>
+                </li>
+                <li>
+                    <a href="/knowledge" 
+                       class="flex items-center py-3 px-4 text-sm font-medium rounded-lg transition-all duration-200 border border-transparent {% if request.path == '/knowledge' %}bg-slate-900 text-white shadow-sm shadow-slate-200 hover:bg-slate-800{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-100{% endif %}"
+                       {% if request.path == '/knowledge' %}aria-current="page"{% endif %}>
+                       Knowledge Base
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="flex-1 overflow-y-auto bg-slate-50/50 p-10" role="main" tabindex="-1">
+        <!-- Flash Messages -->
+        <div id="flash-alerts" aria-live="polite" class="max-w-4xl mx-auto">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="mb-8 p-4 rounded-xl shadow-sm border flex items-center gap-3 {% if category == 'error' %}bg-white text-red-700 border-red-100{% else %}bg-white text-emerald-700 border-emerald-100{% endif %}" 
+                             role="alert">
+                            <span class="w-2 h-2 rounded-full {% if category == 'error' %}bg-red-500{% else %}bg-emerald-500{% endif %}"></span>
+                            <span class="text-sm font-medium">{{ message }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        {% block content %}{% endblock %}
+    </main>
+</div>
+
+</body>
+</html>

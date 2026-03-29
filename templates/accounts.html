@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <header class="mb-10">
+        <h2 class="text-3xl font-black tracking-tight text-slate-900">Social Accounts</h2>
+        <p class="text-slate-500 mt-1">Manage platform connectivity via Session JSON.</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <!-- Reddit -->
+        <section class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full" aria-labelledby="reddit-heading">
+            <div class="flex items-center justify-between mb-8">
+                <h3 id="reddit-heading" class="text-xl font-black tracking-tight text-slate-900">Reddit</h3>
+                <span class="text-[10px] font-bold px-2.5 py-1 rounded-full border {% if accounts.reddit and accounts.reddit.status == 'active' %}bg-emerald-50 text-emerald-700 border-emerald-100{% else %}bg-slate-50 text-slate-500 border-slate-100{% endif %} uppercase tracking-wider">
+                    {% if accounts.reddit %}Connected{% else %}Offline{% endif %}
+                </span>
+            </div>
+            <div class="flex-grow">
+                <p class="text-[11px] text-slate-400 mb-6 font-medium italic">Paste your Reddit session cookies to enable automated posting.</p>
+            </div>
+            <a href="/connect/reddit" class="w-full text-center bg-slate-900 text-white py-4 rounded-xl hover:bg-slate-800 text-sm font-bold transition-all active:scale-[0.98] shadow-lg shadow-slate-100">
+                {% if accounts.reddit %}Update Cookies{% else %}Connect Reddit{% endif %}
+            </a>
+        </section>
+
+        <!-- LinkedIn -->
+        <section class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full" aria-labelledby="linkedin-heading">
+            <div class="flex items-center justify-between mb-8">
+                <h3 id="linkedin-heading" class="text-xl font-black tracking-tight text-slate-900">LinkedIn</h3>
+                <span class="text-[10px] font-bold px-2.5 py-1 rounded-full border {% if accounts.linkedin and accounts.linkedin.status == 'active' %}bg-emerald-50 text-emerald-700 border-emerald-100{% else %}bg-slate-50 text-slate-500 border-slate-100{% endif %} uppercase tracking-wider">
+                    {% if accounts.linkedin %}Connected{% else %}Offline{% endif %}
+                </span>
+            </div>
+            <div class="flex-grow">
+                <p class="text-[11px] text-slate-400 mb-6 font-medium italic">Provide your LinkedIn Session JSON for secure, browser-less connectivity.</p>
+            </div>
+            <a href="/connect/linkedin" class="w-full text-center bg-slate-900 text-white py-4 rounded-xl hover:bg-slate-800 text-sm font-bold transition-all active:scale-[0.98] shadow-lg shadow-slate-100">
+                {% if accounts.linkedin %}Update Cookies{% else %}Connect LinkedIn{% endif %}
+            </a>
+        </section>
+
+        <!-- Threads -->
+        <section class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full" aria-labelledby="threads-heading">
+            <div class="flex items-center justify-between mb-8">
+                <h3 id="threads-heading" class="text-xl font-black tracking-tight text-slate-900">Threads</h3>
+                <span class="text-[10px] font-bold px-2.5 py-1 rounded-full border {% if accounts.threads and accounts.threads.status == 'active' %}bg-emerald-50 text-emerald-700 border-emerald-100{% else %}bg-slate-50 text-slate-500 border-slate-100{% endif %} uppercase tracking-wider">
+                    {% if accounts.threads %}Connected{% else %}Offline{% endif %}
+                </span>
+            </div>
+            <div class="flex-grow">
+                <p class="text-[11px] text-slate-400 mb-6 font-medium italic">Authenticate your Threads account using a JSON cookie blob.</p>
+            </div>
+            <a href="/connect/threads" class="w-full text-center bg-slate-900 text-white py-4 rounded-xl hover:bg-slate-800 text-sm font-bold transition-all active:scale-[0.98] shadow-lg shadow-slate-100">
+                {% if accounts.threads %}Update Cookies{% else %}Connect Threads{% endif %}
+            </a>
+        </section>
+
+    </div>
+</div>
+{% endblock %}

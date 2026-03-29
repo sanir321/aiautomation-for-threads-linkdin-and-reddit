@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <header class="mb-10">
+        <h2 class="text-3xl font-bold tracking-tight text-slate-900">Knowledge Base</h2>
+        <p class="text-slate-500 mt-1">Manage documents to provide context for AI content generation.</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Upload Section -->
+        <section class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 lg:col-span-1" aria-labelledby="upload-heading">
+            <h3 id="upload-heading" class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6">Add Context Document</h3>
+            <p id="upload-desc" class="text-xs text-slate-500 mb-6 font-medium leading-relaxed italic">Upload PDFs, TXTs, or MD files. Text will be extracted to build your agent's technical knowledge.</p>
+            
+            <form method="POST" action="/knowledge" enctype="multipart/form-data">
+                <div class="mb-6">
+                    <label for="file_input" class="sr-only">Choose file to upload</label>
+                    <input type="file" name="file" id="file_input" accept=".pdf,.txt,.md" required
+                           aria-describedby="upload-desc"
+                           class="w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-[11px] file:font-bold file:uppercase file:tracking-wider file:bg-slate-900 file:text-white hover:file:bg-slate-800 transition-all focus:outline-none">
+                </div>
+                <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-xl hover:bg-slate-800 text-sm font-bold transition-all active:scale-[0.98] shadow-lg shadow-slate-100">
+                    Parse Document
+                </button>
+            </form>
+        </section>
+
+        <!-- Documents List -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-100 lg:col-span-2 overflow-hidden" aria-labelledby="docs-heading">
+            <div class="p-8 border-b border-slate-50 flex items-center justify-between">
+                <h3 id="docs-heading" class="text-lg font-bold text-slate-900">Parsed Library</h3>
+                <span class="text-[10px] font-bold text-slate-400 font-mono tracking-tighter">{{ entries|length }} OBJECTS</span>
+            </div>
+            
+            {% if entries %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-50">
+                    <thead class="bg-slate-50/50">
+                        <tr>
+                            <th scope="col" class="px-8 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">Filename</th>
+                            <th scope="col" class="px-8 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">Modified</th>
+                            <th scope="col" class="px-8 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest">Volume</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        {% for entry in entries %}
+                        <tr class="hover:bg-slate-50/30 transition-colors">
+                            <td class="px-8 py-5 whitespace-nowrap text-sm font-bold text-slate-900">{{ entry.filename }}</td>
+                            <td class="px-8 py-5 whitespace-nowrap text-xs text-slate-500 font-medium">{{ entry.uploaded_at }}</td>
+                            <td class="px-8 py-5 whitespace-nowrap text-xs text-slate-500 font-mono italic">{{ entry.content|length }} chars</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-20 text-center">
+                <div class="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                    <span class="text-slate-300">📁</span>
+                </div>
+                <p class="text-sm font-bold text-slate-400">Library is empty</p>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}
