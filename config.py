@@ -9,11 +9,18 @@ class Config:
     # Priority: Env Var > Railway Volume (/data) > Local File
     if os.getenv('DATABASE_PATH'):
         DATABASE_PATH = os.getenv('DATABASE_PATH')
-    elif os.path.exists('/data'):
+    elif os.path.exists('/data') and os.access('/data', os.W_OK):
         DATABASE_PATH = '/data/agent.db'
     else:
+        # Fallback to current directory, ensuring it's writable
         DATABASE_PATH = os.path.join(os.path.dirname(__file__), 'agent.db')
         
+    # Ensure directory exists
+    os.makedirs(os.path.dirname(DATABASE_PATH), exist_ok=True)
+    
+    # Print for debugging in Railway logs
+    print(f"[*] Initializing database at: {DATABASE_PATH}")
+    
     DATABASE_URI = DATABASE_PATH
     UPLOADS_DIR = os.getenv('UPLOADS_DIR', os.path.join(os.path.dirname(__file__), 'uploads'))
     
